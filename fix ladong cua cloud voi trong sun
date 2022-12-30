@@ -1,0 +1,711 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+int sumucn(int n);
+int sumucld(int ld);
+int check(int n, int dc, int dg, int ld);
+void xuat(int bc, int bg, float nd, int n, int check);
+float checkntemp(float ntemp, int n, int dem, int sonbc, float sonbg);
+void update_I(int n, int dc, int dg, int ld, char *w);
+
+int main() {
+	FILE *f; 
+	float PI = 3.1415926535;
+	f = fopen("input.txt", "r");
+	if (f == NULL) {
+		printf("\nLoi");
+		exit(0);
+	}
+	int n, dc, dg, ld, ldtam, bc, bg;
+	int ld1 = ld;
+	float ndu1, ndu2, nd;
+	char w[100]; 
+	fscanf(f, "%d", &n);
+	printf("So nep: %d", n);
+	fscanf(f, "%d", &dc);
+	printf("\nDo dai canh banh chung: %d", dc);
+	fscanf(f, "%d", &dg);
+	printf("\nDuong kinh banh giay: %d", dg);
+	fscanf(f, "%d", &ld);
+	printf("\nSo la dong: %d", ld);
+	fgets(w, 100, f);
+	printf("\nThoi tiet:%s",w);
+	fclose(f);
+
+
+	
+	int sonbc; { 													//Tinh so nep cho 1 cai banh chung
+		sonbc = dc*dc; }
+	
+	float sonbg; {													//Tinh so nep cho 1 cai banh giay
+		sonbg = (dg*dg)*(PI/4); }
+	
+	if (strcmp(w," Wind") == 0) {										//Thoi tiet Wind
+
+		if (sonbc > sonbg) { //Uu tien lam banh chung
+			bc = n / sonbc;	
+			if (bc <= ld) {	
+				printf("\nSo banh chung: %d cai banh chung", bc);
+				ndu1 = n - bc*sonbc; 	
+				nd = ndu1;							
+				ldtam = ld - bc;
+				bg = ndu1 / sonbg;
+				if (bg <= ldtam) {
+					bg = ndu1 / sonbg;															
+					printf("\nSo banh giay: %d cai banh giay", bg);	
+					ndu2 = ndu1 - bg*sonbg;	
+					nd = ndu2;	
+					printf("\nSo nep du: %f", nd);	
+				}
+				else {
+					printf("\nSo banh giay: %d cai banh giay", ldtam);
+					ndu2 = ndu1 - ldtam*sonbg;
+					printf("\nSo nep du: %f", nd);
+				}	
+			} 
+			else {
+				printf("\nSo banh chung: %d cai banh chung", ld);
+				ndu1 = n - sonbc*ld;
+				printf("\nSo nep du: %f", nd);
+			}
+		} 
+
+		if (sonbg > sonbc) { //Uu tien lam banh giay
+			bg = n / sonbg;	
+			if (bg <= ld) {	
+				printf("\nSo banh giay: %d cai banh giay", bg);
+				ndu1 = n - bg*sonbg; 
+				nd = ndu1;								
+				ldtam = ld - bg;
+				bc = ndu1 / sonbc;
+				if (bc <= ldtam) {
+					bc = ndu1 / sonbc;															
+					printf("\nSo banh chung: %d cai banh chung", bc);	
+					ndu2 = ndu1 - bc*sonbc;	
+					nd = ndu2;	
+					printf("\nSo nep du: %f", nd);	
+				}
+				else {
+					printf("\nSo banh chung: %d cai banh chung", ldtam);
+					ndu2 = ndu1 - ldtam*sonbc;
+					nd = ndu2;
+					printf("\nSo nep du: %f", nd);
+				}	
+			} 
+			else {
+				printf("\nSo banh giay: %d cai banh giay", ld);
+				ndu1 = n - sonbg*ld;
+				nd = ndu1;
+				printf("\nSo nep du: %f", nd);
+			}
+		} 
+	} 
+
+	if (strcmp(w," Rain") == 0) {										//Thoi tiet Rain
+	
+	int dem = 1;
+	float ntemp = 0, ndu, ntemp1; 
+
+	    while(ntemp <= n) {											//So banh can bang tam thoi
+        ntemp = (sonbc + sonbg)*dem;
+        	if (ntemp > n) {
+            	dem--;
+        	}
+        	dem++;
+   		}
+
+		{															//update after whiles
+			bc = 0;
+			bg = 0;
+			dem = dem - 1;
+			ntemp = ntemp - (sonbc + sonbg);
+			nd = n - ntemp;
+			bc = bc + dem;
+			bg = bg + dem;
+		}
+
+		if (ld >= dem*2 + 1 || ld >= dem*2) { 						//Neu du la dong
+
+			if (nd >= sonbc) {											//Uu tien ndu lam banh chung truoc  
+
+				bc = bc + 1;// nd/sonbc  
+				nd = n - sonbc*bc;  
+
+				if (nd >= sonbg) {  
+					nd = n - sonbc*(bc) - sonbg*(bg);				 
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg); 
+				}  
+				else {  
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+			else {														//Neu ndu kh du lam banh chung thi lam banh giay  
+
+				if (nd >= sonbg) {  
+					bg = bg + 1;  
+					nd = n - sonbc*(bc) - sonbg*(bg);  
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);			  
+				}  
+				else {  
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+
+		}  
+		else {														//Neu khong du la dong
+		dem = dem - 1;
+		ntemp = ntemp - (sonbc + sonbg);
+		nd = n - ntemp;
+		bc = bc + dem;
+		bg = bg + dem;
+
+			if (nd >= sonbc) {											//Uu tien ndu lam banh chung truoc  
+
+				bc = ld/2 + 1; 
+				bg = ld/2; 
+				nd = n - sonbc*bc;  									//lam xong bc, nd dem xuong duoi lam bg
+
+				if (nd >= sonbg) {  									//neu du lam bg thi lam
+					nd = nd - sonbg*(bg);				 				//nd sau khi lam bg       n - sonbc*(bc)
+					printf("\nTh1:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg); 
+				}  
+				else {  
+					printf("\nTh2:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+			else {														//Neu ndu kh du lam banh chung thi lam banh giay  
+
+				if (nd >= sonbg) {  
+					bg = ld/2 + 1;  
+					bc = ld/2;
+					nd = n - sonbc*(bc) - sonbg*(bg);  
+					printf("\nTh3:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);			  
+				}  
+				else {  
+					bg = ld/2 + 1;  
+					bc = ld/2;
+					nd = n - sonbc*(bc) - sonbg*(bg);  
+					printf("\nTh4:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+
+		}
+
+	}
+
+	if (strcmp(w," Sun") == 0) { 
+
+
+    int arr;
+    int G = dc % 6;
+    int H = ld % 5;
+    int a[5][6] = {{5, 7, 10, 12, 15, 20},
+                    {20, 5, 7, 10, 12, 15},
+                    {15, 20, 5, 7, 10, 12},
+                    {12, 15, 20, 5, 7, 10},
+                    {10, 12, 15, 20, 5, 7}};
+
+    arr = a[H][G];
+    n += (n * ((float)arr / 100));
+    ld -= arr;
+
+    if ((dc + dg) % 3 == 1) {
+        strcpy(w, "Wind");
+        update_I(n, dc, dg, ld, w);
+
+		if (strcmp(w," Wind") == 0) {										
+
+		if (sonbc > sonbg) { //Uu tien lam banh chung
+			bc = n / sonbc;	
+			if (bc <= ld) {	
+				printf("\nSo banh chung: %d cai banh chung", bc);
+				ndu1 = n - bc*sonbc; 	
+				nd = ndu1;							
+				ldtam = ld - bc;
+				bg = ndu1 / sonbg;
+				if (bg <= ldtam) {
+					bg = ndu1 / sonbg;															
+					printf("\nSo banh giay: %d cai banh giay", bg);	
+					ndu2 = ndu1 - bg*sonbg;	
+					nd = ndu2;	
+					printf("\nSo nep du: %f", nd);	
+				}
+				else {
+					printf("\nSo banh giay: %d cai banh giay", ldtam);
+					ndu2 = ndu1 - ldtam*sonbg;
+					printf("\nSo nep du: %f", nd);
+				}	
+			} 
+			else {
+				printf("\nSo banh chung: %d cai banh chung", ld);
+				ndu1 = n - sonbc*ld;
+				printf("\nSo nep du: %f", nd);
+			}
+		} 
+
+		if (sonbg > sonbc) { //Uu tien lam banh giay
+			bg = n / sonbg;	
+			if (bg <= ld) {	
+				printf("\nSo banh giay: %d cai banh giay", bg);
+				ndu1 = n - bg*sonbg; 
+				nd = ndu1;								
+				ldtam = ld - bg;
+				bc = ndu1 / sonbc;
+				if (bc <= ldtam) {
+					bc = ndu1 / sonbc;															
+					printf("\nSo banh chung: %d cai banh chung", bc);	
+					ndu2 = ndu1 - bc*sonbc;	
+					nd = ndu2;	
+					printf("\nSo nep du: %f", nd);	
+				}
+				else {
+					printf("\nSo banh chung: %d cai banh chung", ldtam);
+					ndu2 = ndu1 - ldtam*sonbc;
+					nd = ndu2;
+					printf("\nSo nep du: %f", nd);
+				}	
+			} 
+			else {
+				printf("\nSo banh giay: %d cai banh giay", ld);
+				ndu1 = n - sonbg*ld;
+				nd = ndu1;
+				printf("\nSo nep du: %f", nd);
+			}
+		} 
+	} 
+		
+    }
+    else if ((dc + dg) % 3 == 0) {
+        strcpy(w, "Rain");
+        update_I(n, dc, dg, ld, w);
+
+		if (strcmp(w," Rain") == 0) {										//Thoi tiet Rain
+	
+		int dem = 1;
+		float ntemp = 0, ndu, ntemp1; 
+
+	    while(ntemp <= n) {											//So banh can bang tam thoi
+        ntemp = (sonbc + sonbg)*dem;
+        	if (ntemp > n) {
+            	dem--;
+        	}
+        	dem++;
+   		}
+
+		{															//update after whiles
+			bc = 0;
+			bg = 0;
+			dem = dem - 1;
+			ntemp = ntemp - (sonbc + sonbg);
+			nd = n - ntemp;
+			bc = bc + dem;
+			bg = bg + dem;
+		}
+
+		if (ld >= dem*2 + 1 || ld >= dem*2) { 						//Neu du la dong
+
+			if (nd >= sonbc) {											//Uu tien ndu lam banh chung truoc  
+
+				bc = bc + 1;// nd/sonbc  
+				nd = n - sonbc*bc;  
+
+				if (nd >= sonbg) {  
+					nd = n - sonbc*(bc) - sonbg*(bg);				 
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg); 
+				}  
+				else {  
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+			else {														//Neu ndu kh du lam banh chung thi lam banh giay  
+
+				if (nd >= sonbg) {  
+					bg = bg + 1;  
+					nd = n - sonbc*(bc) - sonbg*(bg);  
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);			  
+				}  
+				else {  
+					printf("\nSo nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+
+		}  
+		else {														//Neu khong du la dong
+		dem = dem - 1;
+		ntemp = ntemp - (sonbc + sonbg);
+		nd = n - ntemp;
+		bc = bc + dem;
+		bg = bg + dem;
+
+			if (nd >= sonbc) {											//Uu tien ndu lam banh chung truoc  
+
+				bc = ld/2 + 1; 
+				bg = ld/2; 
+				nd = n - sonbc*bc;  									//lam xong bc, nd dem xuong duoi lam bg
+
+				if (nd >= sonbg) {  									//neu du lam bg thi lam
+					nd = nd - sonbg*(bg);				 				//nd sau khi lam bg       n - sonbc*(bc)
+					printf("\nTh1:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg); 
+				}  
+				else {  
+					printf("\nTh2:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+			else {														//Neu ndu kh du lam banh chung thi lam banh giay  
+
+				if (nd >= sonbg) {  
+					bg = ld/2 + 1;  
+					bc = ld/2;
+					nd = n - sonbc*(bc) - sonbg*(bg);  
+					printf("\nTh3:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);			  
+				}  
+				else {  
+					bg = ld/2 + 1;  
+					bc = ld/2;
+					nd = n - sonbc*(bc) - sonbg*(bg);  
+					printf("\nTh4:So nep du: %f", nd);  
+					printf("\nSo banh chung: %d", bc);  
+					printf("\nSo banh giay: %d", bg);  
+				}  
+
+			}  
+
+		}
+
+	}
+
+
+    }
+    else if ((dc + dg) % 3 == 2) {
+        strcpy(w, "Cloud");
+        update_I(n, dc, dg, ld, w);
+
+		if (strcmp(w," Cloud") == 0) {									//Thoi tiet Cloud
+		
+		if (sumucn(n) == ld && sumucld(ld) == n) {						//Fix la dong cua Cloud trong sun + Cloud o ngoai
+			printf("\nSo nep du: %d", n);
+		}
+		else {
+
+			bg = n / sonbg;	
+			if (bg <= ld) {	
+				printf("\nSo banh giay: %d ", bg);
+				ndu1 = n - bg*sonbg; 
+				nd = ndu1;								
+				ldtam = ld - bg;
+				bc = ndu1 / sonbc;
+				if (bc <= ldtam) {
+					bc = ndu1 / sonbc;															
+					printf("\nSo banh chung: %d ", bc);	
+					ndu2 = ndu1 - bc*sonbc;		
+					nd = ndu2;
+					printf("\nSo nep du: %f", nd);	
+				}
+				else {
+					printf("\nSo banh chung: %d cai banh chung", ldtam);
+					ndu2 = ndu1 - ldtam*sonbc;
+					nd = ndu2;
+					printf("\nSo nep du: %f", nd);
+				}	
+			} 
+			else {
+				printf("\nSo banh giay: %d cai banh giay", ld);
+				ndu1 = n - sonbg*ld;
+				nd = ndu1;
+				printf("\nSo nep du: %f", nd);
+			} 
+		}
+	}
+
+    }
+
+	}
+
+	if (strcmp(w," Fog") == 0) {										//Thoi tiet Fog
+		printf("\nDo dai banh chung: %d", dc); 
+		printf("\nDo dai banh giay: %d", dg);
+		printf("\nSo nep vua ban: %.3f", (float)n);
+	}
+
+	if (strcmp(w," Cloud") == 0) {									//Thoi tiet Cloud
+		if (sumucn(n) == ld && sumucld(ld) == n) {
+			printf("\nSo nep du: %d", n);
+		}
+		else {
+			bg = n / sonbg;	
+			if (bg <= ld) {	
+				printf("\nSo banh giay: %d cai banh giay", bg);
+				ndu1 = n - bg*sonbg; 
+				nd = ndu1;								
+				ldtam = ld - bg;
+				bc = ndu1 / sonbc;
+				if (bc <= ldtam) {
+					bc = ndu1 / sonbc;															
+					printf("\nSo banh chung: %d cai banh chung", bc);	
+					ndu2 = ndu1 - bc*sonbc;		
+					nd = ndu2;
+					printf("\nSo nep du: %f", nd);	
+				}
+				else {
+					printf("\nSo banh chung: %d cai banh chung", ldtam);
+					ndu2 = ndu1 - ldtam*sonbc;
+					nd = ndu2;
+					printf("\nSo nep du: %f", nd);
+				}	
+			} 
+			else {
+				printf("\nSo banh giay: %d cai banh giay", ld);
+				ndu1 = n - sonbg*ld;
+				nd = ndu1;
+				printf("\nSo nep du: %f", nd);
+			} 
+		}
+	}
+
+	xuat(bc, bg, nd, n, check(n, dc, dg, ld));						//Xuat ket qua vao output.out
+
+	}
+
+int check(int n, int dc, int dg, int ld) {							//Kiem tra du lieu dau vao
+
+    if (n <= 0 || n > 1000) {
+        return -1;
+	}
+
+    if (dc <= 0) {
+        return -1;
+	}
+
+    if (dg <= 0) {
+        return -1;
+	}
+
+    if (ld < 1 || ld > 300) {
+        return -1;
+	}
+
+}
+
+void xuat(int bc, int bg, float nd, int n, int check) {				//Ham xuat ket qua vao output
+	FILE *f;
+    f = fopen("output.txt", "w");
+
+    if (check == -1) {
+        bc = -1;
+        bg = -1;
+        nd = n;
+    }
+
+    fprintf(f, "%d ", bc);
+    fprintf(f, "%d ", bg);
+    fprintf(f, "%.3f", nd);
+    fclose(f);
+}
+
+int sumucn(int n) {													//Tong cac uoc cua so nep
+	int i, sum1=0;
+	for (i = 1; i < n; i++) {
+		if (n%i==0) {
+			sum1 = sum1+i;
+		}
+	}
+	return sum1;
+} 
+
+int sumucld(int ld) {												//Tong cac uoc cua so la dong
+	int i, sum2=0;
+	for (i = 1; i < ld; i++) {
+		if (ld%i==0) {
+			sum2 = sum2 + i;
+		}
+	}
+	return sum2;	
+}
+
+float checkntemp(float ntemp, int n, int dem, int sonbc, float sonbg) {
+    float ntemp1;
+    while(ntemp <= n) {
+        ntemp = (sonbc + sonbg)*dem;
+        if (ntemp <= n) {
+            ntemp1 = (sonbc + sonbg)*(dem-1);
+        }
+        dem++;
+    }
+    return ntemp1;
+}
+
+void update_I(int n, int dc, int dg, int ld, char *w) {				//Update weather
+
+    FILE *f;
+    f = fopen("input.txt", "w");
+
+    fprintf(f, "%d ", n);
+    fprintf(f, "%d ", dc);
+    fprintf(f, "%d ", dg);
+    fprintf(f, "%d ", ld);
+    fprintf(f, "%s", w);
+    fclose(f);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
